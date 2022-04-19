@@ -30,6 +30,7 @@ import mozilla.components.support.webextensions.facts.WebExtensionFacts
 import mozilla.telemetry.glean.testing.GleanTestRule
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -406,24 +407,85 @@ class MetricControllerTest {
     fun `WHEN processing a CreditCardAutofillDialog fact THEN the right metric is recorded`() {
         val controller = ReleaseMetricController(emptyList(), { true }, { true }, mockk())
         val action = mockk<Action>(relaxed = true)
-        val itemsToEvents = listOf(
-            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_FORM_DETECTED to CreditCards.formDetected,
-            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_SUCCESS to CreditCards.autofilled,
-            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_SHOWN to CreditCards.autofillPromptShown,
-            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_EXPANDED to CreditCards.autofillPromptExpanded,
-            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_DISMISSED to CreditCards.autofillPromptDismissed,
+        // Verify card form detected fact
+        var fact = Fact(
+            Component.FEATURE_PROMPTS,
+            action,
+            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_FORM_DETECTED
         )
+        assertFalse(CreditCards.formDetected.testHasValue())
 
-        itemsToEvents.forEach { (item, event) ->
-            val fact = Fact(Component.FEATURE_PROMPTS, action, item)
-            controller.run {
-                fact.process()
-            }
-
-            assertEquals(true, event.testHasValue())
-            assertEquals(1, event.testGetValue().size)
-            assertEquals(null, event.testGetValue().single().extra)
+        controller.run {
+            fact.process()
         }
+
+        assertTrue(CreditCards.formDetected.testHasValue())
+        assertEquals(1, CreditCards.formDetected.testGetValue().size)
+        assertNull(CreditCards.formDetected.testGetValue().single().extra)
+
+        // Verify credit card autofilled fact
+        fact = Fact(
+            Component.FEATURE_PROMPTS,
+            action,
+            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_SUCCESS
+        )
+        assertFalse(CreditCards.autofilled.testHasValue())
+
+        controller.run {
+            fact.process()
+        }
+
+        assertTrue(CreditCards.autofilled.testHasValue())
+        assertEquals(1, CreditCards.autofilled.testGetValue().size)
+        assertNull(CreditCards.autofilled.testGetValue().single().extra)
+
+        // Verify card autofill prompt shown fact
+        fact = Fact(
+            Component.FEATURE_PROMPTS,
+            action,
+            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_SHOWN
+        )
+        assertFalse(CreditCards.autofillPromptShown.testHasValue())
+
+        controller.run {
+            fact.process()
+        }
+
+        assertTrue(CreditCards.autofillPromptShown.testHasValue())
+        assertEquals(1, CreditCards.autofillPromptShown.testGetValue().size)
+        assertNull(CreditCards.autofillPromptShown.testGetValue().single().extra)
+
+        // Verify card autofill prompt expanded fact
+        fact = Fact(
+            Component.FEATURE_PROMPTS,
+            action,
+            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_EXPANDED
+        )
+        assertFalse(CreditCards.autofillPromptExpanded.testHasValue())
+
+        controller.run {
+            fact.process()
+        }
+
+        assertTrue(CreditCards.autofillPromptExpanded.testHasValue())
+        assertEquals(1, CreditCards.autofillPromptExpanded.testGetValue().size)
+        assertNull(CreditCards.autofillPromptExpanded.testGetValue().single().extra)
+
+        // Verify card autofill prompt dismissed fact
+        fact = Fact(
+            Component.FEATURE_PROMPTS,
+            action,
+            CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_DISMISSED
+        )
+        assertFalse(CreditCards.autofillPromptDismissed.testHasValue())
+
+        controller.run {
+            fact.process()
+        }
+
+        assertTrue(CreditCards.autofillPromptDismissed.testHasValue())
+        assertEquals(1, CreditCards.autofillPromptDismissed.testGetValue().size)
+        assertNull(CreditCards.autofillPromptDismissed.testGetValue().single().extra)
     }
 
     @Test
