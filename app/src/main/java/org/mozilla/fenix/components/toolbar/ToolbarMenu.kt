@@ -28,7 +28,6 @@ interface ToolbarMenu {
         object AddonsManager : Item()
         object Quit : Item()
         object OpenInApp : Item()
-        object SetDefaultBrowser : Item()
         object Bookmark : Item()
         object CustomizeReaderView : Item()
         object Bookmarks : Item()

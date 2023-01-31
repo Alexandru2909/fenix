@@ -30,7 +30,6 @@ import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.Events
-import org.mozilla.fenix.GleanMetrics.ExperimentsDefaultBrowser
 import org.mozilla.fenix.GleanMetrics.ReaderMode
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
@@ -46,7 +45,6 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.navigateSafe
-import org.mozilla.fenix.ext.openSetDefaultBrowserOption
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 import org.mozilla.fenix.utils.Do
 import org.mozilla.fenix.utils.Settings
@@ -359,10 +357,6 @@ class DefaultBrowserToolbarMenuController(
                     BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true),
                 )
             }
-            is ToolbarMenu.Item.SetDefaultBrowser -> {
-                ExperimentsDefaultBrowser.toolbarMenuClicked.record(NoExtras())
-                activity.openSetDefaultBrowserOption()
-            }
             is ToolbarMenu.Item.RemoveFromTopSites -> {
                 scope.launch {
                     val removedTopSite: TopSite? =
@@ -457,8 +451,6 @@ class DefaultBrowserToolbarMenuController(
                 Events.browserMenuAction.record(Events.BrowserMenuActionExtra("downloads"))
             is ToolbarMenu.Item.NewTab ->
                 Events.browserMenuAction.record(Events.BrowserMenuActionExtra("new_tab"))
-            is ToolbarMenu.Item.SetDefaultBrowser ->
-                Events.browserMenuAction.record(Events.BrowserMenuActionExtra("set_default_browser"))
             is ToolbarMenu.Item.RemoveFromTopSites ->
                 Events.browserMenuAction.record(Events.BrowserMenuActionExtra("remove_from_top_sites"))
         }
