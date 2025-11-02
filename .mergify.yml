@@ -19,7 +19,7 @@ pull_request_rules:
         - author=github-actions[bot]
         - status-success=complete-push
         - or:
-          - and:
+          - and:asdasd
             - base=main
             - head~=^relbot/AC-Nightly-.+
           - and:
